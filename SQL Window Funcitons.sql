@@ -87,3 +87,17 @@ select
 	sales, RANK() OVER(ORDER BY Sales DESC) RankSales
 from sales.Orders
 
+
+select
+	orderid,
+	orderdate,
+	OrderStatus,
+	sales, 
+	SUM(sales) OVER(
+		PARTITION BY OrderStatus
+		ORDER BY OrderDate
+		ROWS BETWEEN CURRENT ROW AND 2 FOLLOWING
+	) TotalSales
+from sales.Orders
+
+
