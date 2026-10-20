@@ -38,3 +38,47 @@ count(*) over(Partition by orderid) as orderPK
 from Sales.OrdersArchive
 ) t where orderPK > 1
 
+
+
+select * from Sales.Orders
+
+select sales,orderstatus, sum(sales)
+	over(partition by orderstatus) totalSales
+from Sales.Orders
+
+-- Find the total sales across all orders and the totalsales for each product.
+-- Additionallly, provide details such as orderID and order date.
+
+select 
+	sales,
+	orderid,
+	orderdate,
+	productid,
+	sum(sales) over() totalSales,
+	sum(sales) over(partition by productid) totalSalesAcrossProducts
+from Sales.Orders
+
+
+-- Find the percentage contribution of each product's sales to the total sales.
+
+select
+	orderid,
+	productid,
+	sales,
+	sum(Sales) over() totalSales,
+	Round(cast(sales as float) / sum(Sales) over()  * 100, 2) percentageOftotal
+from Sales.Orders
+
+
+-- Find the average sales across alll orders
+-- And find the average sales for each product
+-- Additionally provide details such order Id, order Date
+
+select 
+	orderid,
+	orderdate,
+	sales,
+	avg(sales) over() avgsales,
+	avg(sales) over (partition by productid) avgSalesByProducts
+from sales.Orders
+
