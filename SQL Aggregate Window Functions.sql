@@ -82,3 +82,75 @@ select
 	avg(sales) over (partition by productid) avgSalesByProducts
 from sales.Orders
 
+
+use SalesDB
+
+-- Find all orders where sales are higher than the average sales across all orders
+
+select 
+*
+ from (
+select 
+	OrderID,
+	ProductID,
+	Sales,
+	AVG(Sales) Over () avgsales
+from Sales.Orders
+) t where sales > avgsales
+
+
+
+-- Find the highest & lowest sales across all orders and the highest & lowset sales for each
+-- product. Additionally, provide details such as order ID and order date.
+
+
+select 
+	OrderID,
+	OrderDate,
+	orderstatus,
+	productid,
+	sales,
+	max(sales) over() HighestSales,
+	min(sales) over() LowestSales,
+	max(sales) over(partition by  productid) HighestSalesbyProduct,
+	min(sales) over(partition by  productid) LowestSalesbyProduct
+from sales.Orders
+
+
+-- Show the emps with the highest salaries.
+
+select * from (
+	select *,
+		max(salary) Over () HighestSalary
+	from Sales.Employees
+) t where Salary = HighestSalary
+
+
+
+-- RUNNING TOTAL
+
+-- Calculate moving average of sales for each product over time
+
+select
+	Orderid,
+	productid,
+	orderdate,
+	sales,
+	avg(sales) Over(partition by productid) avgByProduct,
+	avg(sales) Over(partition by productid order by orderdate) movingavg
+from Sales.Orders
+
+-- ROLLING TOTAL
+
+-- Calculate moving average of sales for each product over time
+-- Calculate moving avg of sales for each product over time, including only the next order.
+
+select
+	Orderid,
+	productid,
+	orderdate,
+	sales,
+	avg(sales) Over(partition by productid) avgByProduct,
+	avg(sales) Over(partition by productid order by orderdate) movingavg,
+	avg(sales) Over(partition by productid order by orderdate Rows between current row and 1 following) movingavg
+from Sales.Orders
