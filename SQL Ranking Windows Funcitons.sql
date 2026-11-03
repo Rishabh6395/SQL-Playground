@@ -45,10 +45,52 @@ group by customerid
 
 
 
+select 
+ROW_NUMBER() OVER (Order by orderid, orderdate) UniqueID,
+* 
+from sales.OrdersArchive
+
+
+
+-- Identify duplicate rows in the table 'Orders Archive'
+-- and return a clean result without any duplicates
+
+select * from (
+select 
+ROW_NUMBER() OVER(Partition by Orderid order by creationtime desc) rn,
+*
+from sales.OrdersArchive
+) t where rn=1
+
+
+-- NTITLE()
+-- Divides the rows into a specified number of approximately equal groups (Buckets)
+
+
+Select
+Orderid,
+Sales,
+NTILE(3) Over(Order by sales desc) threeBucket,
+NTILE(2) Over(Order by sales desc) twoBucket,
+NTILE(1) Over(Order by sales desc) oneBucket
+from sales.Orders
 
 
 
 
+-- Segment all orders into 3 categories: high, medium and low sales.
 
-
+select * ,
+	case 
+		when bucket =1  Then 'High'
+		when bucket = 2 then 'medium'
+		when bucket = 3 then 'low'
+	END AS Sales_Category
+from (
+	select
+		orderid,
+		Sales,
+		NTILE(3) OVER(ORDER BY Sales desc) Bucket
+	from Sales.Orders
+) t
 
