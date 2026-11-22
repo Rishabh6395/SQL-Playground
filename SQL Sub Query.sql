@@ -59,3 +59,43 @@ where Price > (
 )
 
 
+-- Show the details of orders made by customers in Germany.
+
+select *
+From Sales.Orders
+where CustomerID in (
+	select CustomerID from Sales.Customers
+	where Country='Germany'
+)
+
+
+-- Find female employees whose salaries are greater
+-- than the salaries of any male employees
+
+
+select * from Sales.Employees
+where Gender = 'F' and Salary > ANY
+(select Salary from Sales.Employees
+where Gender = 'M')
+
+
+-- Find female employees whose salaries are greater
+-- than the salaries of all male employees
+
+select * from Sales.Employees
+where Gender = 'F' and Salary > all
+(select Salary from Sales.Employees
+where Gender = 'M')
+
+-- Show all customer details and find the total orders
+-- of each customer
+
+
+select *,
+(select count(*) from Sales.Orders o 
+where o.CustomerID=c.CustomerID) totalSales
+from Sales.Customers c
+
+
+
+
